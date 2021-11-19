@@ -23,7 +23,7 @@ function MovieSearch() {
     const term = searchTerm.current.value;
 
     // setTimeout(() => {
-    getMoviesBySearchTerm(term, "movies")
+    getMoviesBySearchTerm(term, "movie")
       .then((movies) => {
         console.log("getMoviesBySearchTerm Done!", movies);
 
