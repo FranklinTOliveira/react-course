@@ -1,0 +1,19 @@
+/* try to use BEM (Block Element Modifier) naming convention */
+
+.Todo {
+  background-color: gray;
+  padding: 10px;
+  margin: 10px;
+}
+
+.Todo__TodoList {
+  background-color: black;
+  color: #fff;
+  padding: 10px;
+}
+
+.Todo__TodoListItem {
+  background-color: gold;
+  padding: 10px;
+  color: black;
+}
