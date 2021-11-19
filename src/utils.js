@@ -1,5 +1,5 @@
 const apiKey = process.env.REACT_APP_OMDB_KEY; // grabbed from inside our .env file
-const OMDB_ENDPOINT = `http://www.omdbapi.com/?apikey=${apiKey}&`;
+const OMDB_ENDPOINT = `https://www.omdbapi.com/?apikey=${apiKey}&`;
 
 // Write an arrow function called getMoviesBySearchTerm that takes a search string as input and uses fetch and async/await to get an array of movies with a matching title from OMDb API.
 const getMoviesBySearchTerm = async (searchTerm) => {

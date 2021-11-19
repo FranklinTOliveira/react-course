@@ -1,28 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import "./App.css";
 
+// Components
+import Spinner from "./components/Spinner";
+import Counter from "./components/Counter";
 import MovieCard from "./components/MovieCard";
 import MovieDetails from "./components/MovieDetails";
 
+// Utilities
 import { getMoviesBySearchTerm, getMovieDetailsById } from "./utils";
 
 function App() {
   console.log("<App /> component rendering...");
 
-  // const [name, setName] = useState("Erik"); // = A[0]
-  // const [isHappy, setIsHappy] = useState(true); // = A[1]
-  const [counter, setCounter] = useState(0); // = A[1]
+  const [isLoading, setIsLoading] = useState(false);
   const [movie, setMovie] = useState(null);
   const [movieList, setMovieList] = useState([]);
 
-  useEffect(() => {
-    getMoviesBySearchTerm("superman").then((movies) => {
-      console.log("getMoviesBySearchTerm Done!", movies);
+  const searchTerm = useRef(""); // useRef doesn't request a re-render
 
-      setMovieList(movies);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getMoviesBySearchTerm("superman").then((movies) => {
+  //     console.log("getMoviesBySearchTerm Done!", movies);
+
+  //     setMovieList(movies);
+  //   });
+  // }, []);
 
   useEffect(() => {
     // use setTimeOut to simulate internet lag
@@ -34,30 +38,62 @@ function App() {
     // }, 4000);
   }, []);
 
-  const handleClickIncrement = () => {
-    setCounter(counter + 1); // Update counter during next render
-  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const handleClickDecrement = () => {
-    setCounter(counter - 1); // Update counter during next render
+    setIsLoading(true);
+
+    console.log(searchTerm.current.value);
+
+    const term = searchTerm.current.value;
+
+    setTimeout(() => {
+      getMoviesBySearchTerm(term)
+        .then((movies) => {
+          console.log("getMoviesBySearchTerm Done!", movies);
+
+          setMovieList(movies);
+        })
+        .catch(() => {})
+        .finally(() => {
+          setIsLoading(false);
+          //searchTerm.current.value = "";
+        });
+    }, 3000);
   };
 
   return (
     <div className="App">
       <h1>Movie App</h1>
 
-      <h1>Counter state value: {counter}</h1>
+      <h4>Movie List</h4>
 
-      <button onClick={handleClickIncrement}>Increment</button>
-      <button onClick={handleClickDecrement}>Decrement</button>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Enter movie..." ref={searchTerm} />
+        <button type="submit">Search</button>
+      </form>
 
-      <hr />
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <div className="movielist">
+          {movieList.map((movie) => (
+            <MovieCard
+              key={movie.imdbID}
+              title={movie.Title}
+              type={movie.Type}
+              posterUrl={movie.Poster}
+            />
+          ))}
+        </div>
+      )}
 
-      <pre>
+      <Counter />
+      <Counter />
+
+      {/* <pre>
         <code>{JSON.stringify(movie)}</code>
-      </pre>
-
-      <hr />
+      </pre> */}
 
       <MovieDetails
         posterUrl="https://m.media-amazon.com/images/M/MV5BOGUyZDUxZjEtMmIzMC00MzlmLTg4MGItZWJmMzBhZjE0Mjc1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg"
@@ -83,19 +119,6 @@ function App() {
       )}
 
       <hr />
-
-      <h4>Movie List</h4>
-
-      <div className="movielist">
-        {movieList.map((movie) => (
-          <MovieCard
-            key={movie.imdbID}
-            title={movie.Title}
-            type={movie.Type}
-            posterUrl={movie.Poster}
-          />
-        ))}
-      </div>
     </div>
   );
 }
